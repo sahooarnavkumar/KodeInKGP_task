@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>ECLIPSE 26 Ticket Maker!!</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+</head>
+<body>
+
+<h1 id="title"> ECLIPSE '26 Ticket Maker </h1>
+
+<div id="navbar">
+  <button onclick="showPage('home')">Home</button>
+  <button onclick="showPage('make')">Make Ticket</button>
+  <button onclick="showPage('mypasses')">My Passes (<span id="passcount">0</span>)</button>
+</div>
+
+<!-- home -->
+<div id="page-home" class="page">
+  <center>
+    <h2>Welcome to Eclipse Fest.</h2>
+    <button class="bigbtn" onclick="showPage('make')">MAKE MY TICKET -&gt;</button>
+  </center>
+</div>
+
+<!-- ticket banane waala part -->
+<div id="page-make" class="page" style="display:none">
+
+  <h2>Step 1: Who are you?</h2>
+  <table>
+    <tr><td>Your Name:</td><td><input type="text" id="in-name"></td></tr>
+    <tr><td>Roll Number:</td><td><input type="text" id="in-roll"></td></tr>
+    <tr><td>Photo Link:</td><td><input type="text" id="in-photo" onkeyup="updatePreview()"></td></tr>
+  </table>
+  <img id="preview-img" src="" style="display:none; width:100px; margin-top:10px; border:3px solid black;">
+
+  <hr>
+
+  <h2>Step 2: Pick a Pass</h2>
+  <div id="pass-area"></div>
+
+  <hr>
+
+  <h2>Step 3: Pick ur Artists (click to select)</h2>
+  <div id="artist-area"></div>
+
+  <hr>
+
+  <h2>Step 4: Food:</h2>
+  <table id="food-area"></table>
+
+  <hr>
+
+  <h2>Step 5: Games:</h2>
+  <table id="games-area"></table>
+
+  <hr>
+
+  <h2>Total so far: <span id="total-price">₹0</span></h2>
+  <button class="bigbtn" onclick="makeTicket()"> GENERATE MY TICKET </button>
+
+  <div id="ticket-box" style="display:none">
+    <h2>YOUR TICKET!!</h2>
+    <div id="the-ticket" class="ticket">
+      <img id="t-photo" src="">
+      <h3 id="t-name"></h3>
+      <p id="t-roll"></p>
+      <p id="t-pass"></p>
+      <p id="t-artists"></p>
+      <p id="t-food"></p>
+      <p id="t-games"></p>
+      <p id="t-total"></p>
+      <p id="t-id"></p>
+      <img id="t-qr" src="">
+    </div>
+    <br>
+    <button onclick="downloadTicket()"> Download Ticket (png)</button>
+    <button onclick="location.reload()">Make Another One</button>
+  </div>
+
+</div>
+
+<!-- pass dikhayega -->
+<div id="page-mypasses" class="page" style="display:none">
+  <h2>My Saved Passes</h2>
+  <div id="passes-list"></div>
+</div>
+
+<script src="data.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
