@@ -298,7 +298,7 @@ function renderMyPasses() {
   var list = document.getElementById("passes-list");
 
   if (all.length == 0) {
-    list.innerHTML = "<p>you dont have any passes yet! go make one :)</p>";
+    list.innerHTML = "<p>Empty?</p>";
     return;
   }
 
