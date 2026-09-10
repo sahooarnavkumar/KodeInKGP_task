@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ECLIPSE '26 — Ticket Generator</title>
+<meta name="description" content="Build your pass for Eclipse '26. Pick artists, food, activities and generate your ticket." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="style.css" />
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" defer></script>
+</head>
+<body>
+
+<div class="glow glow-a" aria-hidden="true"></div>
+<div class="glow glow-b" aria-hidden="true"></div>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-mark">◐</span>
+    <span class="brand-word">ECLIPSE<em>'26</em></span>
+  </div>
+
+  <nav class="tabs" role="tablist" aria-label="Main sections">
+    <button class="tab-btn active" data-tab="home" role="tab" aria-selected="true">Home</button>
+    <button class="tab-btn" data-tab="generate" role="tab" aria-selected="false">Generate Ticket</button>
+    <button class="tab-btn" data-tab="passes" role="tab" aria-selected="false">My Passes <span id="passes-count" class="count-pill" hidden>0</span></button>
+  </nav>
+
+  <button id="theme-toggle" class="icon-btn" aria-label="Toggle light and dark mode" title="Toggle theme">
+    <span class="theme-icon">☾</span>
+  </button>
+</header>
+
+<main>
+
+  <!-- ============ HOME ============ -->
+  <section id="panel-home" class="tab-panel active">
+    <div class="hero">
+      <p class="hero-kicker">Three nights. One campus. Zero curfew.</p>
+      <h1 class="hero-title">Your pass to <span>Eclipse&nbsp;'26</span> starts here.</h1>
+      <p class="hero-sub">
+        Pick your artists, load up on food and games, choose a pass tier,
+        and walk away with a real, downloadable ticket — stub and all.
+      </p>
+      <button class="btn btn-primary btn-lg" data-goto="generate">Generate my ticket</button>
+
+      <div class="hero-stats">
+        <div class="stat"><strong>6</strong><span>headline acts</span></div>
+        <div class="stat"><strong>3</strong><span>festival days</span></div>
+        <div class="stat"><strong>4</strong><span>pass tiers</span></div>
+      </div>
+    </div>
+
+    <div class="ticket-preview" aria-hidden="true">
+      <div class="stub-ticket demo-ticket">
+        <div class="stub-main">
+          <p class="stub-eyebrow">Eclipse '26 · Access Pass</p>
+          <p class="stub-name">Your Name Here</p>
+          <p class="stub-meta">Gold Pass · 3-Day Access</p>
+          <div class="stub-barcode" aria-hidden="true"></div>
+        </div>
+        <div class="stub-tear" aria-hidden="true"></div>
+        <div class="stub-side">
+          <span class="stub-id">#ECL26-000000</span>
+          <span class="stub-rotate">ADMIT ONE</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-block">
+      <h2>How it works</h2>
+      <ol class="steps-preview">
+        <li><span>1</span>Tell us who you are</li>
+        <li><span>2</span>Pick a pass tier</li>
+        <li><span>3</span>Choose artists, food & games</li>
+        <li><span>4</span>Review the price breakdown</li>
+        <li><span>5</span>Generate your ticket</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============ GENERATE TICKET ============ -->
+  <section id="panel-generate" class="tab-panel">
+
+    <div class="stepper" id="stepper">
+      <div class="stepper-track">
+        <div class="stepper-fill" id="stepper-fill"></div>
+      </div>
+      <ol class="stepper-labels">
+        <li data-step="1" class="active">Details</li>
+        <li data-step="2">Pass</li>
+        <li data-step="3">Artists</li>
+        <li data-step="4">Food</li>
+        <li data-step="5">Games</li>
+        <li data-step="6">Review</li>
+      </ol>
+    </div>
+
+    <form id="ticket-form" novalidate>
+
+      <!-- STEP 1: DETAILS -->
+      <div class="step active" data-step="1">
+        <h2>Who's this ticket for?</h2>
+        <p class="step-hint">Your name and roll number are printed straight onto the ticket.</p>
+
+        <div class="field-grid">
+          <label class="field">
+            <span>Full name</span>
+            <input type="text" id="in-name" name="name" placeholder="e.g. Arnav Sharma" autocomplete="name" required />
+            <small class="field-error" data-for="in-name"></small>
+          </label>
+
+          <label class="field">
+            <span>Institute roll number</span>
+            <input type="text" id="in-roll" name="roll" placeholder="e.g. 26ME10065" required />
+            <small class="field-error" data-for="in-roll"></small>
+          </label>
+
+          <label class="field field-wide">
+            <span>Photo URL</span>
+            <input type="url" id="in-photo" name="photo" placeholder="https://example.com/your-photo.jpg" required />
+            <small class="field-error" data-for="in-photo"></small>
+            <small class="field-hint">Paste a direct image link — this is only used for the preview and ticket, nothing is uploaded.</small>
+          </label>
+        </div>
+
+        <div class="photo-preview-wrap">
+          <div class="photo-preview" id="photo-preview">
+            <span id="photo-preview-placeholder">No photo yet</span>
+            <img id="photo-preview-img" alt="" hidden />
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2: PASS -->
+      <div class="step" data-step="2">
+        <h2>Choose your pass</h2>
+        <p class="step-hint">Every tier includes the one before it.</p>
+
+        <div class="pass-grid" id="pass-grid"></div>
+      </div>
+
+      <div class="step" data-step="3">
+        <div class="step-head-row">
+          <div>
+            <h2>Pick your line-up</h2>
+            <p class="step-hint">Select every act you want on your schedule. At least one, no upper limit.</p>
+          </div>
+          <input type="search" class="search-input" id="search-artists" placeholder="Search artists…" />
+        </div>
+        <div class="artist-grid" id="artist-grid"></div>
+      </div>
+
+      <div class="step" data-step="4">
+        <div class="step-head-row">
+          <div>
+            <h2>Load up on food</h2>
+            <p class="step-hint">Optional — set quantities for anything you want pre-ordered.</p>
+          </div>
+          <input type="search" class="search-input" id="search-food" placeholder="Search food…" />
+        </div>
+        <div class="list-grid" id="food-list"></div>
+      </div>
+
+      <!-- STEP 5: GAMES -->
+      <div class="step" data-step="5">
+        <div class="step-head-row">
+          <div>
+            <h2>Games & activities</h2>
+            <p class="step-hint">Optional — toggle on anything you want added to your pass.</p>
+          </div>
+          <input type="search" class="search-input" id="search-games" placeholder="Search activities…" />
+        </div>
+        <div class="list-grid" id="games-list"></div>
+      </div>
+
+      <!-- STEP 6: REVIEW -->
+      <div class="step" data-step="6">
+        <h2>Review your ticket</h2>
+        <p class="step-hint">Check everything before you generate — you can still go back and edit.</p>
+
+        <div class="review-grid">
+          <div class="review-card">
+            <h3>Attendee</h3>
+            <div id="review-user" class="review-user"></div>
+          </div>
+
+          <div class="review-card">
+            <h3>Pass</h3>
+            <div id="review-pass"></div>
+          </div>
+
+          <div class="review-card">
+            <h3>Line-up (<span id="review-artist-count">0</span>)</h3>
+            <ul id="review-artists" class="review-list"></ul>
+          </div>
+
+          <div class="review-card">
+            <h3>Food</h3>
+            <ul id="review-food" class="review-list"></ul>
+          </div>
+
+          <div class="review-card">
+            <h3>Games & activities</h3>
+            <ul id="review-games" class="review-list"></ul>
+          </div>
+
+          <div class="review-card review-price">
+            <h3>Price breakdown</h3>
+            <dl id="price-breakdown" class="price-breakdown"></dl>
+            <div class="price-total">
+              <span>Total</span>
+              <strong id="price-total-value">₹0</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </form>
+
+    <div class="step-nav">
+      <button type="button" class="btn btn-ghost" id="prev-btn" disabled>Back</button>
+      <span class="step-nav-spacer"></span>
+      <button type="button" class="btn btn-primary" id="next-btn">Continue</button>
+      <button type="button" class="btn btn-primary" id="generate-btn" hidden>Generate ticket</button>
+    </div>
+
+    <!-- GENERATED TICKET -->
+    <div class="ticket-result" id="ticket-result" hidden>
+      <h2>You're in.</h2>
+      <p class="step-hint">Your ticket has been generated and saved to <strong>My Passes</strong> on this device.</p>
+
+      <div class="stub-ticket" id="final-ticket">
+        <div class="stub-main">
+          <p class="stub-eyebrow">Eclipse '26 · Access Pass</p>
+          <div class="stub-person">
+            <img id="ticket-photo" alt="Attendee photo" />
+            <div>
+              <p class="stub-name" id="ticket-name"></p>
+              <p class="stub-meta" id="ticket-roll"></p>
+            </div>
+          </div>
+          <p class="stub-meta" id="ticket-pass-name"></p>
+          <div class="stub-details" id="ticket-details"></div>
+          <div class="stub-barcode" aria-hidden="true"></div>
+        </div>
+        <div class="stub-tear" aria-hidden="true"></div>
+        <div class="stub-side">
+          <img id="ticket-qr" alt="Ticket QR code" width="86" height="86" />
+          <span class="stub-id" id="ticket-id"></span>
+          <span class="stub-rotate">ADMIT ONE</span>
+        </div>
+      </div>
+
+      <div class="ticket-actions">
+        <button class="btn btn-primary" id="download-btn">Download as PNG</button>
+        <button class="btn btn-ghost" id="new-ticket-btn">Generate another</button>
+        <button class="btn btn-ghost" data-goto="passes">View My Passes</button>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ============ MY PASSES ============ -->
+  <section id="panel-passes" class="tab-panel">
+    <h2>My Passes</h2>
+    <p class="step-hint">Saved on this device only, via your browser's local storage.</p>
+
+    <div id="passes-empty" class="empty-state">
+      <p>No passes generated yet.</p>
+      <button class="btn btn-primary" data-goto="generate">Generate your first ticket</button>
+    </div>
+
+    <div id="passes-list" class="passes-grid"></div>
+  </section>
+
+</main>
+
+<!-- Ticket detail modal, used from My Passes -->
+<div class="modal" id="ticket-modal" hidden>
+  <div class="modal-backdrop" data-close-modal></div>
+  <div class="modal-body">
+    <button class="icon-btn modal-close" data-close-modal aria-label="Close">✕</button>
+    <div class="stub-ticket" id="modal-ticket">
+      <div class="stub-main">
+        <p class="stub-eyebrow">Eclipse '26 · Access Pass</p>
+        <div class="stub-person">
+          <img id="modal-photo" alt="Attendee photo" />
+          <div>
+            <p class="stub-name" id="modal-name"></p>
+            <p class="stub-meta" id="modal-roll"></p>
+          </div>
+        </div>
+        <p class="stub-meta" id="modal-pass-name"></p>
+        <div class="stub-details" id="modal-details"></div>
+        <div class="stub-barcode" aria-hidden="true"></div>
+      </div>
+      <div class="stub-tear" aria-hidden="true"></div>
+      <div class="stub-side">
+        <img id="modal-qr" alt="Ticket QR code" width="86" height="86" />
+        <span class="stub-id" id="modal-id"></span>
+        <span class="stub-rotate">ADMIT ONE</span>
+      </div>
+    </div>
+    <div class="ticket-actions">
+      <button class="btn btn-primary" id="modal-download-btn">Download as PNG</button>
+      <button class="btn btn-danger" id="modal-delete-btn">Delete pass</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+<script src="data.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
